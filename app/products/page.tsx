@@ -2,12 +2,19 @@
 import SideNav from "../dashboard/SideNav"
 import { MdDeleteForever } from "react-icons/md"
 import Header from "../dashboard/Header"
-import React, { FormEventHandler, useState, useCallback, useEffect } from "react"
+import React, { FormEventHandler, useState, useCallback, useEffect ,useMemo} from "react"
 import { auth } from '@/firebase'
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from 'next/navigation'
 import Loading from "../dashboard/Loading"
 import { addProduct, deleteProduct, getCategories, getProducts, User, Item } from "@/utils"
+import {
+    createColumnHelper,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    
+  } from '@tanstack/react-table'
 
 interface Product {
     id: string,
@@ -17,6 +24,54 @@ interface Product {
     name: string
 }
 
+const columnHelper = createColumnHelper<Product>()
+
+const columns = [
+    columnHelper.accessor('name', {
+      header: 'Name',
+     
+    }),
+    columnHelper.accessor('price', {
+        header: 'Price',
+        cell:({cell})=>(       
+                 `₦${cell.getValue().toLocaleString()}`)
+        
+       
+      }),
+      columnHelper.accessor('category', {
+        header: 'Category',
+       
+      }),
+      columnHelper.display({
+        id: 'actions',
+        accessorFn: (row) => row,
+        header: 'Action',
+        cell:({cell})=>{
+            const row:any = cell.getValue();
+          
+            return (
+              <MdDeleteForever
+                className="text-3xl text-red-500 cursor-pointer"
+                onClick={() => deleteProduct(row.id, row.name)}
+              />
+            );
+          }
+          
+        // cell: ({ cell }) =>{
+        //     const row = cell.getValue();
+        //     console.log(row.id)
+        // }
+
+               
+    ,
+      }),
+      
+
+     
+]
+
+ 
+
 export default function Home() { 
     const [user, setUser] = useState<User>()
     const router = useRouter()
@@ -25,6 +80,24 @@ export default function Home() {
     const [price, setPrice] = useState<number>(100)
     const [category, setCategory] = useState<string>("select")
     const [products, setProducts] = useState([])
+
+    const transformedProducts = useMemo(() => {
+        if (!products) return []
+    
+        return products
+          .map(product => (
+    product
+          ))
+         
+      }, [products])
+
+      const tableInstance = useReactTable({
+        columns,
+        data:transformedProducts ??[],
+        getCoreRowModel: getCoreRowModel(),
+      })
+    
+      
     
 	const isUserLoggedIn = useCallback(() => {
 		onAuthStateChanged(auth, (user) => {
@@ -58,7 +131,7 @@ export default function Home() {
           setPrice(value);
     };
     
-    
+  
     return (
           <main className='flex w-full min-h-[100vh] relative'>
           <SideNav/>
@@ -104,7 +177,38 @@ export default function Home() {
                 </section>
                 
                 <div className="w-full">
-                    <table className="w-full border-collapse table-auto">
+
+                <table className="w-full border-collapse table-auto">
+          <thead>
+            {tableInstance.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th colSpan={header.colSpan} key={header.id} className='cursor-pointer font-bold'>
+                    <div
+                      className='flex items-center justify-between gap-6 font-bold'
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                     
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {tableInstance.getRowModel().rows.map(row => (
+               <tr key={row.id}>
+               {row.getVisibleCells().map(cell => (
+                 <td key={cell.id}>
+                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                 </td>
+               ))}
+             </tr>
+            ))}
+          </tbody>
+        </table>
+                    
+                    {/* <table className="w-full border-collapse table-auto">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -133,7 +237,7 @@ export default function Home() {
                             
                             
                         </tbody>
-                    </table>
+                    </table> */}
                 </div>
             </div>
            
