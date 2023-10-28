@@ -4,7 +4,7 @@ import { EmailAuthProvider } from "firebase/auth";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAWKx0qmXdqdZ-CRnGhuRC9FwxwnLwT6rg",
+  apiKey: process.env.FIREBASE_API,
   authDomain: "sales-7c045.firebaseapp.com",
   projectId: "sales-7c045",
   storageBucket: "sales-7c045.appspot.com",
