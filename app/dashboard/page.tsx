@@ -20,6 +20,7 @@ export default function Dashboard() {
     const openModal = () => setAddNew(true)
     const [user, setUser] = useState<User>()
     const router = useRouter()
+    console.log("hrllo")
     
 	const isUserLoggedIn = useCallback(() => {
 		onAuthStateChanged(auth, async (user) => {
@@ -27,6 +28,7 @@ export default function Dashboard() {
                 setUser({ email: user.email, uid: user.uid });
                 const promises = [getProducts(setProducts), getCategories(setCategories), getTotalSales(setTotalSales), getSales(setSales)];
                 await Promise.all(promises);
+                console.log(user)
                 
 			} else {
 				return router.push("/");
@@ -35,12 +37,15 @@ export default function Dashboard() {
 	}, [router]);
 
 	useEffect(() => {
-        isUserLoggedIn();
+        isUserLoggedIn()
 	}, [isUserLoggedIn]);
+    
 
     if(!user?.email) return <Loading/>
+    console.log("user",user)
     return (
         <main className='flex w-full min-h-[100vh] relative'>
+          
           <SideNav/>
             
             <div className='md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]'>

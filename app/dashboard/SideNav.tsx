@@ -10,7 +10,7 @@ export default function SideNav() {
     return (
          <div className='w-[15%] md:block hidden'>
             <nav className='w-[15%] fixed flex flex-col left-0 h-[100vh] bg-[#160F3F] p-4 space-y-8'>
-                <Link href="/" className='hover:text-white mt-4 mb-8 font-bold text-xl text-gray-300'>Stock App</Link>
+                <Link href="/dashboard" className='hover:text-white mt-4 mb-8 font-bold text-xl text-gray-300'>Stock App</Link>
                 <div className="w-full flex items-center">
                       <RiDashboardFill className="text-[#9AA8BD] hover:text-white mr-2"/>
                      <Link href="/dashboard" className="text-[#9AA8BD] hover:text-white">Dashboard</Link>
