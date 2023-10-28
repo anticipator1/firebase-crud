@@ -4,13 +4,14 @@ import { EmailAuthProvider } from "firebase/auth";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API,
+  apiKey: "AIzaSyAWKx0qmXdqdZ-CRnGhuRC9FwxwnLwT6rg",
   authDomain: "sales-7c045.firebaseapp.com",
   projectId: "sales-7c045",
   storageBucket: "sales-7c045.appspot.com",
   messagingSenderId: "123644888942",
   appId: "1:123644888942:web:59a92f3f14564f6820a37f"
 };
+
 
 
 // Initialize Firebase
