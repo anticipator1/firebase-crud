@@ -51,7 +51,7 @@ const columns = [
   }),
   columnHelper.accessor("price", {
     header: "Price",
-    cell: ({ cell }) => `₦${cell.getValue().toLocaleString()}`,
+    cell: ({ cell }) => `Nrs ${cell.getValue().toLocaleString()}`,
   }),
   columnHelper.accessor("category", {
     header: "Category",
