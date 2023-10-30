@@ -58,6 +58,7 @@ const columns = [
   }),
   columnHelper.display({
     id: "actions",
+    //@ts-ignore
     accessorFn: (row: Product) => row,
     header: "Action",
     cell: ({ cell }) => {
