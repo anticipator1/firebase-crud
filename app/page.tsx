@@ -43,14 +43,18 @@ export default function Home() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="admin123"
         />
+
         <button
           type="submit"
           className="p-3 bg-blue-600 hover:bg-blue-800 text-white md:w-[200px] w-full rounded"
         >
           LOG IN
         </button>
+        <p>Don't have an account? </p>
+        <Link className="underline text-blue-600" href="/signup">
+          Sign Up
+        </Link>
       </form>
-      <Link href="/signup">Sign Up</Link>
     </main>
   );
 }

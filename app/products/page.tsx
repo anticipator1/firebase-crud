@@ -121,9 +121,6 @@ export default function Home() {
 
   const onSubmit: SubmitHandler<IFormInput> = (formData) => {
     addProduct(formData.name, formData.price, formData.category);
-    {
-      console.log(getValues("category"));
-    }
 
     setCategory("select");
     setPrice(100);
