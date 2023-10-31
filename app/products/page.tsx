@@ -134,6 +134,7 @@ export default function Home() {
   const [price, setPrice] = useState<number>(100);
   const [category, setCategory] = useState<string>("select");
   const [products, setProducts] = useState([]);
+  const [name, setName] = useState("");
   const { register, handleSubmit, getValues } = useForm<IFormInput>();
   const openModal = () => setAddNew(true);
 
@@ -152,6 +153,8 @@ export default function Home() {
   const isUserLoggedIn = useCallback(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        //@ts-ignore
+        setName(user.displayName);
         setUser({ email: user.email, uid: user.uid });
         getCategories(setCategories);
         getProducts(setProducts);
@@ -218,7 +221,7 @@ export default function Home() {
         </div>
       </dialog>
       <div className="md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]">
-        <Header title="Products" />
+        <Header title="Products" name={name} />
 
         <section className="w-full mb-10">
           <h3 className="text-lg mb-4">

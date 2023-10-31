@@ -25,12 +25,16 @@ export default function Dashboard() {
   const [sales, setSales] = useState<Sales[]>([]);
   const openModal = () => setAddNew(true);
   const [user, setUser] = useState<User>();
+  const [name, setName] = useState("");
   const router = useRouter();
   console.log("hrllo");
 
   const isUserLoggedIn = useCallback(() => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log("user", user.displayName);
+        //@ts-ignore
+        setName(user.displayName);
         setUser({ email: user.email, uid: user.uid });
         const promises = [
           getProducts(setProducts),
@@ -45,6 +49,7 @@ export default function Dashboard() {
       }
     });
   }, [router]);
+  console.log("console", name);
 
   useEffect(() => {
     isUserLoggedIn();
@@ -57,7 +62,7 @@ export default function Dashboard() {
       <SideNav />
 
       <div className="md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]">
-        <Header title="Dashboard" />
+        <Header title="Dashboard" name={name} />
 
         <div className="flex items-center md:flex-row flex-col justify-between w-full md:space-x-4 mb-8">
           <div className="bg-white md:w-1/3 w-full h-[200px] shadow rounded p-3 hover:shadow-lg md:my-auto my-2">
