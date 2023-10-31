@@ -7,8 +7,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Loading from "../dashboard/Loading";
 import { MdDeleteForever } from "react-icons/md";
-import { deleteCategory, getCategories, addCategory } from "@/utils";
+import {
+  deleteCategory,
+  getCategories,
+  addCategory,
+  editProduct,
+} from "@/utils";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { AiOutlineEdit } from "react-icons/ai";
 
 interface IFormInput {
   name: string;
@@ -24,6 +30,13 @@ interface Item {
   id: string;
   number_of_products: number;
 }
+interface ButtonProps {
+  onClick: () => void;
+}
+
+interface EditingState {
+  [key: string]: boolean;
+}
 
 export default function Home() {
   const [user, setUser] = useState<User>();
@@ -31,11 +44,16 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<IFormInput>();
+  const [isEditing, setIsEditing] = useState<EditingState>({});
 
   const onSubmit: SubmitHandler<IFormInput> = (formData, e) => {
     addCategory(formData.name);
     e?.target.reset();
   };
+  // const editForm: SubmitHandler<IFormInput> = (formData, e) => {
+  //   editProduct(formData.name);
+  //   setIsEditing(false);
+  // };
 
   const isUserLoggedIn = useCallback(() => {
     onAuthStateChanged(auth, (user) => {
@@ -51,6 +69,30 @@ export default function Home() {
   useEffect(() => {
     isUserLoggedIn();
   }, [isUserLoggedIn]);
+
+  const handleEditClick = (id: string, name: string) => {
+    setIsEditing((prevEditingState) => ({
+      ...prevEditingState,
+      [id]: true,
+    }));
+    setCategoryName(name);
+  };
+
+  const editForm = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string,
+    name: string
+  ) => {
+    e.preventDefault();
+    console.log(id, categoryName);
+    editProduct(id, name);
+    setIsEditing((prevEditingState) => ({
+      ...prevEditingState,
+      [id]: false,
+    }));
+
+    // handleEditClick(id, name);
+  };
 
   if (!user?.email) return <Loading />;
 
@@ -95,11 +137,32 @@ export default function Home() {
                 className="w-full bg-white p-3 flex items-center justify-between rounded my-3"
                 key={item.id}
               >
-                <p className="md:text-md text-sm">{item.name}</p>
+                {isEditing[item.id] ? (
+                  <form className="w-full flex items-center space-x-6">
+                    <input
+                      type="text"
+                      value={categoryName}
+                      onChange={(e) => setCategoryName(e.target.value)}
+                    />
+                    <button
+                      onClick={(e) => {
+                        editForm(e, item.id, categoryName);
+                      }}
+                    >
+                      save
+                    </button>
+                  </form>
+                ) : (
+                  <p className="md:text-md text-sm">{item.name}</p>
+                )}
                 <div className="flex items-center space-x-5">
                   <MdDeleteForever
                     className="text-3xl text-red-500 cursor-pointer"
                     onClick={() => deleteCategory(item.id, item.name)}
+                  />
+                  <AiOutlineEdit
+                    className="text-3xl text-blue-500 cursor-pointer"
+                    onClick={() => handleEditClick(item.id, item.name)}
                   />
                 </div>
               </div>

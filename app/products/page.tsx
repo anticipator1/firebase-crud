@@ -1,7 +1,12 @@
 "use client";
 import SideNav from "../dashboard/SideNav";
-import { MdDeleteForever } from "react-icons/md";
+
 import Header from "../dashboard/Header";
+import { AiFillCloseCircle } from "react-icons/ai";
+import { MdDeleteForever } from "react-icons/md";
+import { IoMdAddCircle } from "react-icons/io";
+import { AiOutlineEdit } from "react-icons/ai";
+
 import React, {
   FormEventHandler,
   useState,
@@ -13,6 +18,7 @@ import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Loading from "../dashboard/Loading";
+import EditProduct from "./EditProduct";
 import {
   addProduct,
   deleteProduct,
@@ -20,6 +26,7 @@ import {
   getProducts,
   User,
   Item,
+  editProduct,
 } from "@/utils";
 import {
   createColumnHelper,
@@ -77,10 +84,33 @@ const columns = [
     //     console.log(row.id)
     // }
   }),
+  columnHelper.display({
+    id: "edit",
+    //@ts-ignore
+    accessorFn: (row: Product) => row,
+    header: "edit",
+    cell: ({ cell }) => {
+      const row: any = cell.getValue();
+
+      return (
+        <AiOutlineEdit
+          className="text-3xl text-blue-500 cursor-pointer"
+          onClick={() => <Loading />}
+        />
+      );
+    },
+
+    // cell: ({ cell }) =>{
+    //     const row = cell.getValue();
+    //     console.log(row.id)
+    // }
+  }),
 ];
 
 export default function Home() {
   const [user, setUser] = useState<User>();
+  const [addNew, setAddNew] = useState<boolean>(false);
+
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState<string>("");
@@ -88,6 +118,7 @@ export default function Home() {
   const [category, setCategory] = useState<string>("select");
   const [products, setProducts] = useState([]);
   const { register, handleSubmit, getValues } = useForm<IFormInput>();
+  const openModal = () => setAddNew(true);
 
   const transformedProducts = useMemo(() => {
     if (!products) return [];
@@ -127,6 +158,9 @@ export default function Home() {
     setProduct("");
   };
 
+  const editForm: SubmitHandler<IFormInput> = (formData) => {
+    console.log("hello world");
+  };
   // const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
   //   e.preventDefault();
   //   addProduct(product, price, category);
@@ -143,7 +177,29 @@ export default function Home() {
   return (
     <main className="flex w-full min-h-[100vh] relative">
       <SideNav />
+      {/* <button
+        className="btn"
+        //@ts-ignore
+        onClick={() => document.getElementById("my_modal_5").showModal()}
+      >
+        open modal
+      </button> */}
+      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Hello!</h3>
+          <p className="py-4">
+            Press ESC key or click the button below to close
+          </p>
+          <div className="modal-action">
+            <form method="dialog" onSubmit={handleSubmit(editForm)}>
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn">add</button>
 
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
       <div className="md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]">
         <Header title="Products" />
 
@@ -243,6 +299,7 @@ export default function Home() {
           </table>
         </div>
       </div>
+      {addNew && <EditProduct setAddNew={setAddNew} productsArray={products} />}
     </main>
   );
 }

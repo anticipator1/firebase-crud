@@ -18,6 +18,7 @@ import {
   orderBy,
   setDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import db from "./firebase";
 
@@ -230,6 +231,16 @@ export const deleteProduct = async (id: string, name: string) => {
   try {
     await deleteDoc(doc(db, "products", id));
     successMessage(`${name} deleted 🎉`);
+  } catch (err) {
+    errorMessage("Encountered an error ❌");
+    console.log(err);
+  }
+};
+
+export const editProduct = async (id: string, name: string) => {
+  try {
+    await updateDoc(doc(db, "categories", id), { name: name });
+    successMessage(`${name} updated 🎉`);
   } catch (err) {
     errorMessage("Encountered an error ❌");
     console.log(err);
