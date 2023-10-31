@@ -19,6 +19,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  getDocs,
 } from "firebase/firestore";
 import db from "./firebase";
 
@@ -245,6 +246,24 @@ export const editProduct = async (id: string, name: string) => {
     errorMessage("Encountered an error ❌");
     console.log(err);
   }
+};
+
+export const getAllSales = async () => {
+  const querySnapshot = await getDocs(collection(db, "sales"));
+  const results: any = [];
+
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+    const data = doc.data();
+
+    results.push({
+      name: data.products[0].name,
+      quantity: Number(data.products[0].quantity),
+    });
+  });
+  console.log("temp", results);
+  return results;
 };
 
 export const addSales = async (

@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import Loading from "../dashboard/Loading";
 import { Sales, getSales, getSalesForDay } from "@/utils";
 import { Collapse } from "react-collapse";
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts";
+import { getAllSales } from "@/utils";
 
 interface User {
   email: string | null;
@@ -28,6 +30,29 @@ export default function Sales() {
   const [user, setUser] = useState<User>();
   const router = useRouter();
   const [clicked, setClicked] = useState<number>();
+
+  const [data, setData] = useState([]);
+
+  // Sample data
+  // const data = [
+  //   { name: "Geeksforgeeks", students: 400 },
+  //   { name: "Technical scripter", students: 700 },
+  //   { name: "Geek-i-knack", students: 200 },
+  //   { name: "Geek-o-mania", students: 1000 },
+  // ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allSales = await getAllSales();
+        setData(allSales);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const toggleClick = (index: number) => {
     if (clicked == index) {
@@ -46,6 +71,7 @@ export default function Sales() {
       }
     });
   }, [router]);
+  console.log("data", data);
 
   useEffect(() => {
     isUserLoggedIn();
@@ -59,6 +85,12 @@ export default function Sales() {
 
       <div className="md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]">
         <Header title="Sales" />
+        <BarChart width={600} height={200} data={data}>
+          <Bar dataKey="quantity" fill="green" />
+          <CartesianGrid stroke="#ccc" />
+          <XAxis dataKey="name" />
+          <YAxis />
+        </BarChart>
 
         <section className="flex items-center justify-between mb-8">
           <h3 className="text-lg">Recent Sales</h3>
