@@ -87,35 +87,44 @@ const columns = [
   columnHelper.display({
     id: "edit",
     //@ts-ignore
-    accessorFn: (row: Product) => row,
-    header: "edit",
-    cell: ({ cell }) => {
-      const row: any = cell.getValue();
+    // accessorFn: (row: Product) => row,
+    header: "Edit",
+    // cell: ({ cell }) => {
+    //   let row: any = cell.getValue();
+    //   console.log(row.name);
 
-      return (
-        <>
-          <AiOutlineEdit
-            className="text-3xl text-blue-500 cursor-pointer"
-            //@ts-ignore
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          />
+    //   const onClick = () => {
+    //     row = cell.getValue();
+    //     console.log("second", row);
+    //     //@ts-ignore
+    //     document.getElementById("my_modal_1").showModal();
+    //   };
 
-          <dialog id="my_modal_1" className="modal">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">Hello!</h3>
-              <p className="py-4">{row.name}</p>
-              <div className="modal-action">
-                <form method="dialog">
-                  <input name="name" type="text" value={row.name} />
-                  {/* if there is a button in form, it will close the modal */}
-                  <button className="btn">Close</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-        </>
-      );
-    },
+    //   return (
+    //     <>
+    //       <AiOutlineEdit
+    //         className="text-3xl text-blue-500 cursor-pointer"
+    //         //@ts-ignore
+    //         onClick={onClick}
+    //       />
+
+    //       <dialog id="my_modal_1" className="modal">
+    //         <div className="modal-box">
+    //           <h3 className="font-bold text-lg">Hello!</h3>
+
+    //           <p className="py-4">{row?.name}</p>
+    //           <div className="modal-action">
+    //             <form method="dialog">
+    //               <input name="name" type="text" value={row?.category} />
+    //               {/* if there is a button in form, it will close the modal */}
+    //               <button className="btn">Close</button>
+    //             </form>
+    //           </div>
+    //         </div>
+    //       </dialog>
+    //     </>
+    //   );
+    // },
 
     // cell: ({ cell }) =>{
     //     const row = cell.getValue();
@@ -134,9 +143,37 @@ export default function Home() {
   const [price, setPrice] = useState<number>(100);
   const [category, setCategory] = useState<string>("select");
   const [products, setProducts] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState<string>("");
   const { register, handleSubmit, getValues } = useForm<IFormInput>();
   const openModal = () => setAddNew(true);
+
+  const confirmEdit = (e: any) => {
+    console.log("hello");
+    console.log(individualUser.category);
+    editProduct(
+      individualUser.id,
+      individualUser.name,
+      individualUser.category
+    );
+  };
+
+  const [individualUser, setIndividualUser] = useState({
+    id: "",
+    name: "",
+    category: "",
+  });
+  const displayButton = (rowData: any) => {
+    console.log("clicked row::", rowData);
+    const element = document.getElementById("my_modal_3") as HTMLDialogElement;
+    if (element) {
+      element.showModal();
+    }
+    setIndividualUser({
+      id: rowData.id,
+      name: rowData.name,
+      category: rowData.category,
+    });
+  };
 
   const transformedProducts = useMemo(() => {
     if (!products) return [];
@@ -239,7 +276,6 @@ export default function Home() {
                 placeholder="Product"
                 required
               />
-
               <input
                 className="border-b-[1px] px-4 py-2 w-1/3 rounded"
                 {...register("price", {
@@ -250,7 +286,6 @@ export default function Home() {
                 placeholder="Price"
                 required
               />
-
               <select
                 className="border-b-[1px] px-4 py-2 w-1/3"
                 {...register("category", {
@@ -307,16 +342,69 @@ export default function Home() {
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id}>
-                      {flexRender(
+                      {cell.column.id === "edit" ? (
+                        <AiOutlineEdit
+                          onClick={() => displayButton(row?.original)}
+                          className="text-2xl text-gray-800 text-center w-full"
+                        />
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
+                      )}
+
+                      {/* {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
-                      )}
+                      )} */}
                     </td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
+
+          <dialog id="my_modal_3" className="modal">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Edit Product </h3>
+
+              <div className="modal-action">
+                <form
+                  method="dialog"
+                  onSubmit={confirmEdit}
+                  className="flex flex-col w-full"
+                >
+                  <div className="flex-row m-2">
+                    <label htmlFor="name" className="w-28">
+                      Product Name :
+                    </label>
+                    <input
+                      className="p-4 border-2"
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={individualUser?.name}
+                      onChange={(e) =>
+                        setIndividualUser({
+                          ...individualUser,
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  {/* if there is a button in form, it will close the modal */}
+                  <button type="submit" className="btn w-1/2 ">
+                    save
+                  </button>
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    ✕
+                  </button>
+                </form>
+              </div>
+            </div>
+          </dialog>
         </div>
       </div>
       {addNew && <EditProduct setAddNew={setAddNew} productsArray={products} />}

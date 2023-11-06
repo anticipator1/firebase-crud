@@ -12,6 +12,7 @@ import {
   getCategories,
   addCategory,
   editProduct,
+  editCategory,
 } from "@/utils";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -85,7 +86,7 @@ export default function Home() {
   ) => {
     e.preventDefault();
     console.log(id, categoryName);
-    editProduct(id, name);
+    editCategory(id, name);
     setIsEditing((prevEditingState) => ({
       ...prevEditingState,
       [id]: false,

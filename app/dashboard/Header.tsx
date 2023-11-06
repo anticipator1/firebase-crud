@@ -19,7 +19,8 @@ export default function Header({ title, name }: Props) {
       <h2 className="text-2xl font-bold">{title}</h2>
       <div className="flex items-center space-x-6">
         <p className="text-[#9AA8BD] md:block hidden">
-          Welcome <span className="text-blue-500 italic">{name}</span>
+          Welcome{" "}
+          <span className="text-blue-500 italic">{name ? name : "admin"}</span>
         </p>
         <ImExit
           className="text-2xl text-[#D64979] md:block hidden  cursor-pointer"

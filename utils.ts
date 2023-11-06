@@ -238,9 +238,26 @@ export const deleteProduct = async (id: string, name: string) => {
   }
 };
 
-export const editProduct = async (id: string, name: string) => {
+export const editCategory = async (id: string, name: string) => {
   try {
     await updateDoc(doc(db, "categories", id), { name: name });
+    successMessage(`${name} updated 🎉`);
+  } catch (err) {
+    errorMessage("Encountered an error ❌");
+    console.log(err);
+  }
+};
+
+export const editProduct = async (
+  id: string,
+  name: string,
+  category: string
+) => {
+  try {
+    await updateDoc(doc(db, "products", id), {
+      name: name,
+      category: category,
+    });
     successMessage(`${name} updated 🎉`);
   } catch (err) {
     errorMessage("Encountered an error ❌");

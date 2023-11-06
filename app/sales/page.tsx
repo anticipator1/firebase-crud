@@ -30,6 +30,7 @@ export default function Sales() {
   const [user, setUser] = useState<User>();
   const router = useRouter();
   const [clicked, setClicked] = useState<number>();
+  const [name, setName] = useState("");
 
   const [data, setData] = useState([]);
 
@@ -65,6 +66,8 @@ export default function Sales() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         getSales(setSales);
+        //@ts-ignore
+        setName(user.displayName);
         setUser({ email: user.email, uid: user.uid });
       } else {
         return router.push("/");
@@ -84,7 +87,7 @@ export default function Sales() {
       <SideNav />
 
       <div className="md:w-[85%] w-full py-4 px-6 min-h-[100vh] bg-[#f4f4f6]">
-        <Header title="Sales" />
+        <Header title="Sales" name={name} />
         <BarChart width={600} height={200} data={data}>
           <Bar dataKey="quantity" fill="green" />
           <CartesianGrid stroke="#ccc" />
